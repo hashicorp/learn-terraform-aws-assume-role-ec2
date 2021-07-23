@@ -1,26 +1,13 @@
 provider "aws" {
-  alias   = "source"
-  profile = "source"
   region  = "us-east-2"
+  profile = "source"
 
   assume_role {
-    role_arn = "arn:aws:iam::${data.aws_caller_identity.destination.account_id}:role/assume_role"
+    role_arn = "<ROLE_ARN>"
   }
 }
 
-provider "aws" {
-  alias   = "destination"
-  profile = "destination"
-  region  = "us-east-2"
-}
-
-data "aws_caller_identity" "destination" {
-  provider = aws.destination
-}
-
-
 data "aws_ami" "ubuntu" {
-  provider    = aws.source
   most_recent = true
 
   filter {
@@ -37,7 +24,6 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "example" {
-  provider      = aws.source
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   tags = {
